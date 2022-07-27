@@ -1,0 +1,27 @@
+targetRevision: dev
+
+awsRegion: eu-west-1
+
+domain: example.com
+
+certManager_sa_eks_role_arn: arn:aws:iam::12345678901:role/cert-manager-role
+
+externalDNS:
+  domain: example@example.com
+  txtOwnerId: Z049EXAMPLE
+  serviceAccount:
+    name: external-dns
+    eksRoleARN: arn:aws:iam::12345678912:role/external-dns
+  namespace: kube-system
+
+certIssuer:
+  email: example@example.com
+  hostedZoneID: Z049EXAMPLE
+  awsRegion: eu-west-1
+  dnsZones: "example.com"
+  letsencryptServer: https://acme-v02.api.letsencrypt.org/directory
+
+appHosts:
+  apitextstat: app-demo.devops-lab.co.uk
+  testApp1: app-1.devops-lab.co.uk
+  testApp2: app-2.devops-lab.co.uk

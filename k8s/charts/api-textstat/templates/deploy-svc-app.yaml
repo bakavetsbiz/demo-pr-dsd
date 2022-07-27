@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  labels:
+    app: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+      - name: app
+        image: bakavets/demo-dsd:0.2
+        command:
+        - /bin/sh
+        - /var/app/scripts/build.sh
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: app-env
+        volumeMounts:
+        - mountPath: /var/app/files
+          name: app-volume
+      volumes:
+      - name: app-volume
+        persistentVolumeClaim:
+          claimName: app-pvc

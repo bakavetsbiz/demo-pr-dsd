@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  destination:
+    namespace: cert-manager
+    server: {{ .Values.spec.destination.server }}
+  source:
+    repoURL: 'https://charts.jetstack.io'
+    targetRevision: {{ .Values.cert.version }}
+    chart: cert-manager
+    helm:
+      values: |        
+        installCRDs: true
+
+        prometheus:
+          enabled: true
+          servicemonitor:
+            enabled: true
+            labels:
+              release: prometheus-operator
+
+        serviceAccount:
+          create: true
+          name: cert-manager-route53
+          annotations:
+            eks.amazonaws.com/role-arn: {{ .Values.cert.sa_annotation_eks_role_arn }}
+        extraArgs: 
+        - --issuer-ambient-credentials
+  project: infrastructure
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

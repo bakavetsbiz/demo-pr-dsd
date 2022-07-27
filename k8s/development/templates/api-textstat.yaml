@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  namespace: argocd
+  name: api-textstat
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: development
+  source:
+    path: k8s/charts/api-textstat/
+    repoURL: https://github.com/bakavetsbiz/demo-dsd.git
+    targetRevision: {{ .Values.targetRevision }}
+    helm:
+      values: |
+        host: {{ .Values.appHosts.apitextstat }}
+
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: api-textstat
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

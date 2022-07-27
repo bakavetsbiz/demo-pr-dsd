@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-issuers
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infrastructure
+  source:
+    repoURL: https://github.com/bakavetsbiz/demo-dsd.git
+    targetRevision: {{ .Values.targetRevision }}
+    path: k8s/infrastructure/charts/certificates/
+    helm:
+      values: |
+        email: {{ .Values.certIssuer.email }}
+        hostedZoneID: {{ .Values.certIssuer.hostedZoneID }}
+        awsRegion: {{ .Values.certIssuer.awsRegion }}
+        dnsZones: {{ .Values.certIssuer.dnsZones }}
+        letsencryptServer: https://acme-v02.api.letsencrypt.org/directory
+  destination:
+    namespace: cert-manager
+    server: {{ .Values.spec.destination.server }}
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

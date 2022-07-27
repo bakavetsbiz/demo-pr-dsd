@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dev-apps
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: development
+  source:
+    path: k8s/development/
+    repoURL: https://github.com/bakavetsbiz/demo-dsd.git
+    targetRevision: {{ .Values.targetRevision }}
+    helm:
+      values: |
+        appHosts:
+          apitextstat: {{ .Values.appHosts.apitextstat }}
+          testApp1: {{ .Values.appHosts.testApp1 }}
+          testApp2: {{ .Values.appHosts.testApp2 }}
+
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: -1  # unlimited

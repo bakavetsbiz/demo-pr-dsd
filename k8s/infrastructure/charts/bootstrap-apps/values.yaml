@@ -1,0 +1,47 @@
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+
+targetRevision: main
+
+awsRegion: eu-west-1
+
+metricsServer:
+  version: 6.0.8
+
+postgresql:
+  version: 11.6.19
+
+rabbitmq:
+  version: 10.1.16
+
+cert:
+  version: v1.7.0
+  sa_annotation_eks_role_arn: arn:aws:iam::12345678912:role/demo-eks-cluster-cert-manager-role
+
+certIssuer:
+  email: example@gmail.com
+  hostedZoneID: Z12345DZFEXAMPLE
+  awsRegion: eu-west-1
+  dnsZones: ["example.com"]
+  letsencryptServer: https://acme-v02.api.letsencrypt.org/directory
+
+ingressNginx:
+  version: 4.2.0
+
+externalDNS:
+  version: 6.7.1
+  domain: example.com
+  txtOwnerId: Z12345DZFEXAMPLE
+  loglevel: info
+  zoneType: public
+  policy: upsert-only
+  namespace: kube-system
+  serviceAccount:
+    name: external-dns
+    eksRoleARN: arn:aws:iam::12345678912:role/external-dns
+
+prometheus:
+  version: 38.0.2
+
+domain: example.com

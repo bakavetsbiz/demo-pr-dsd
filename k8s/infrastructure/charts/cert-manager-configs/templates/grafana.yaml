@@ -1,0 +1,36 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: grafana-service-externalname
+  labels:
+    {{- include "gateways.labels" . | nindent 4 }}
+spec:
+  type: ExternalName
+  externalName: prometheus-operator-grafana.prometheus-operator.svc.cluster.local
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  labels:
+    {{- include "gateways.labels" . | nindent 4 }}
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - grafana.{{ .Values.domain }}
+    secretName: grafana-cert
+  rules:
+   - host: grafana.{{ .Values.domain }}
+     http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: grafana-service-externalname
+                port: 
+                  number: 80

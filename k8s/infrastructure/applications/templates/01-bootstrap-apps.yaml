@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bootstrap-apps
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infrastructure
+  source:
+    path: k8s/infrastructure/charts/bootstrap-apps/
+    repoURL: https://github.com/bakavetsbiz/demo-dsd.git
+    targetRevision: {{ .Values.targetRevision }}
+    helm:
+      values: |
+        awsRegion: {{ .Values.awsRegion }}
+
+        cert:
+          sa_annotation_eks_role_arn: {{ .Values.certManager_sa_eks_role_arn }}
+
+        certIssuer:
+          email: {{ .Values.certIssuer.email}}
+          hostedZoneID: {{ .Values.certIssuer.hostedZoneID }}
+          awsRegion: {{ .Values.certIssuer.awsRegion }}
+          dnsZones: ["{{ .Values.certIssuer.dnsZones }}"]
+
+        externalDNS:
+          domain: {{ .Values.externalDNS.domain }}
+          txtOwnerId: {{ .Values.externalDNS.txtOwnerId }}
+          serviceAccount:
+            name: {{ .Values.externalDNS.serviceAccount.name }}
+            eksRoleARN: {{ .Values.externalDNS.serviceAccount.eksRoleARN }}
+          namespace: {{ .Values.externalDNS.namespace }}
+
+        domain: {{ .Values.domain }}
+        
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+
+  syncPolicy:
+    automated:
+      prune: true
+    retry:
+      limit: -1

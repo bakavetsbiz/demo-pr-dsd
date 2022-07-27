@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: grafana-cert
+  labels:
+    {{- include "gateways.labels" . | nindent 4 }}
+spec:
+  secretName: grafana-cert
+  commonName: grafana.{{ .Values.domain }}
+  dnsNames:
+  - grafana.{{ .Values.domain }}
+  issuerRef:
+    name: clusterissuer-letsencrypt
+    kind: ClusterIssuer

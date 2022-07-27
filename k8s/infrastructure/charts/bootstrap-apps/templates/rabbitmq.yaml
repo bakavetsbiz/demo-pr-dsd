@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rabbitmq
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infrastructure
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    targetRevision: {{ .Values.rabbitmq.version }}
+    chart: rabbitmq
+    helm:
+      values: |
+        auth:
+          username: test
+          password: test
+        commonLabels:
+          env: dev
+          app: demo
+  destination:
+    namespace: rabbitmq
+    server: {{ .Values.spec.destination.server }}
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+     - CreateNamespace=true

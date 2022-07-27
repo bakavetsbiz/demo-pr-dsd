@@ -1,0 +1,6 @@
+targetRevision: main
+
+appHosts:
+  apitextstat: app-demo.example.com
+  testApp1: app-1.example.com
+  testApp2: app-2.example.com

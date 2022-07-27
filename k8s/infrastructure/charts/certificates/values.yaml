@@ -1,0 +1,5 @@
+email: example@gmail.com
+hostedZoneID: Z12345DZFEXAMPLE
+awsRegion: eu-west-1
+dnsZones: ["example.com"]
+letsencryptServer: https://acme-v02.api.letsencrypt.org/directory
